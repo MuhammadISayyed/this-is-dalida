@@ -15,6 +15,13 @@
       "when": 1756585932451,
       "tag": "0001_tranquil_wild_pack",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757355679291,
+      "tag": "0002_fix_serial_ids",
+      "breakpoints": true
     }
   ]
 }

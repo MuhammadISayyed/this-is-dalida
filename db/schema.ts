@@ -1,13 +1,13 @@
-import { integer, text, pgTable, timestamp, boolean } from 'drizzle-orm/pg-core'
+import { serial, integer, text, pgTable, timestamp, boolean } from 'drizzle-orm/pg-core'
 
 export const brand = pgTable('brand', {
-  id: integer('id').primaryKey(),
+  id: serial('id').primaryKey(),
   name: text('name').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
 export const personality = pgTable('personality', {
-  id: integer('id').primaryKey(),
+  id: serial('id').primaryKey(),
   brandId: integer('brand_id')
     .references(() => brand.id)
     .notNull(),
@@ -18,7 +18,7 @@ export const personality = pgTable('personality', {
 })
 
 export const adjectives = pgTable('adjectives', {
-  id: integer('id').primaryKey(),
+  id: serial('id').primaryKey(),
   brandId: integer('brand_id')
     .references(() => brand.id)
     .notNull(),
@@ -32,7 +32,7 @@ export const adjectives = pgTable('adjectives', {
 })
 
 export const rules = pgTable('rules', {
-  id: integer('id').primaryKey(),
+  id: serial('id').primaryKey(),
   brandId: integer('brand_id')
     .references(() => brand.id)
     .notNull(),
