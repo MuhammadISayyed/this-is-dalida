@@ -80,3 +80,27 @@ export const ruleSchema = z.object({
     .max(255, "Don't example must be less than 255 characters")
     .trim(),
 })
+
+export const ruleUpdateSchema = z.object({
+  ruleId: z.number().positive(),
+  title: z
+    .string()
+    .min(1, 'Rule title is required')
+    .max(100, 'Title must be less than 100 characters')
+    .trim(),
+  description: z
+    .string()
+    .min(10, 'Description must be at least 10 characters')
+    .max(500, 'Description must be less than 500 characters')
+    .trim(),
+  doExample: z
+    .string()
+    .min(5, 'Do example is required')
+    .max(255, 'Do example must be less than 255 characters')
+    .trim(),
+  dontExample: z
+    .string()
+    .min(5, "Don't example is required")
+    .max(255, "Don't example must be less than 255 characters")
+    .trim(),
+})

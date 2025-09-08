@@ -7,6 +7,7 @@ import {
   personalitySchema,
   adjectivesSchema,
   ruleSchema,
+  ruleUpdateSchema,
 } from './validations'
 import { eq, and } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
@@ -94,7 +95,7 @@ export async function updateBrandName(formData: FormData) {
  * Replaces all existing personality data
  */
 export async function updatePersonality(
-  answers: { questionIndexL: number; answer: string }[]
+  answers: { questionIndex: number; answer: string }[]
 ) {
   try {
     const brandId = await getCurrentBrandId()
@@ -104,19 +105,19 @@ export async function updatePersonality(
 
     const validatedData = personalitySchema.parse({ answers })
 
-    await db.transaction(async (tx) => {
-      await tx.delete(personality).where(eq(personality.brandId, brandId))
+    // Delete all existing personality data for this brand
+    await db.delete(personality).where(eq(personality.brandId, brandId))
 
-      if (validatedData.answers.length > 0) {
-        await tx.insert(personality).values(
-          validatedData.answers.map(({ questionIndex, answer }) => ({
-            brandId,
-            questionIndex,
-            answer,
-          }))
-        )
-      }
-    })
+    // Insert new personality data if provided
+    if (validatedData.answers.length > 0) {
+      await db.insert(personality).values(
+        validatedData.answers.map(({ questionIndex, answer }) => ({
+          brandId,
+          questionIndex,
+          answer,
+        }))
+      )
+    }
     revalidatePath('/personality')
     revalidatePath('/')
     return { success: true }
@@ -150,23 +151,20 @@ export async function updateAdjectives(
 
     const validatedData = adjectivesSchema.parse({ adjectives: adjectiveData })
 
-    // Use transaction to ensure data consistency
-    await db.transaction(async (tx) => {
-      // Delete all existing adjectives for this brand
-      await tx.delete(adjectives).where(eq(adjectives.brandId, brandId))
+    // Delete all existing adjectives for this brand
+    await db.delete(adjectives).where(eq(adjectives.brandId, brandId))
 
-      // Insert new adjectives
-      await tx.insert(adjectives).values(
-        validatedData.adjectives.map((adj) => ({
-          brandId,
-          name: adj.name,
-          description: adj.description,
-          subtleExample: adj.subtleExample,
-          obviousExample: adj.obviousExample,
-          intenseExample: adj.intenseExample,
-        }))
-      )
-    })
+    // Insert new adjectives
+    await db.insert(adjectives).values(
+      validatedData.adjectives.map((adj) => ({
+        brandId,
+        name: adj.name,
+        description: adj.description,
+        subtleExample: adj.subtleExample,
+        obviousExample: adj.obviousExample,
+        intenseExample: adj.intenseExample,
+      }))
+    )
 
     revalidatePath('/adjectives')
     revalidatePath('/')
