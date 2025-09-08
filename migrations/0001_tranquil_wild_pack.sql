@@ -1,0 +1,1 @@
+ALTER TABLE "brand" RENAME COLUMN "text" TO "name";
